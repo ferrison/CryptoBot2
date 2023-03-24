@@ -1,0 +1,7 @@
+aiogram==3.0.0b3
+aiogram-media-group
+SQLAlchemy==1.4.39
+PyMySQL==1.0.2
+pytz==2022.7.1
+cryptography==38.0.2
+APScheduler==3.9.1

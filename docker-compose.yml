@@ -1,0 +1,20 @@
+version: "3.9"
+services:
+#  bot:
+#    build: .
+#    environment:
+#      - BOT_TOKEN=${BOT_TOKEN}
+#      - DB_HOST=${DB_HOST}
+#      - DB_PORT=${DB_PORT}
+#      - DB_USER=${DB_USER}
+#      - DB_PASSWORD=${DB_PASSWORD}
+#      - DB_NAME=${DB_NAME}
+  mysql:
+    image: "mysql"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - TZ=Europe/Moscow
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./mysql:/var/lib/mysql"
