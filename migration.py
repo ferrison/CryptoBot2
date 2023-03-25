@@ -7,7 +7,7 @@ import config
 from db import engine
 from model.models import User, Bot, Channel, Tag, TagValue, Post, Button, Message, Media
 
-with Session(engine) as new_session,\
+with Session(create_engine(f"mysql+pymysql://{config.DB_USER}:{config.DB_PASSWORD}@{config.DB_HOST}:{config.DB_PORT}/crypto_bot")) as new_session,\
         Session(create_engine(f"mysql+pymysql://{config.DB_USER}:{config.DB_PASSWORD}@{config.DB_HOST}:{config.DB_PORT}/content_bots")) as old_session:
     content_managers = old_session.execute("SELECT * FROM content_managers;").all()
     for manager in content_managers:
@@ -58,7 +58,7 @@ with Session(engine) as new_session,\
 
         for media_data in data["media_data"]:
             media = Media(file_id=media_data["media"], type=media_data["type"])
-            post.append(media)
+            post.medias.append(media)
 
         for ch in data["needed_channels"]:
             message = Message(channel_tg_id=ch)
