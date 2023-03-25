@@ -18,7 +18,7 @@ from poster import check_planned_posts
 
 logging.basicConfig(level=logging.INFO)
 # logging.basicConfig(level=logging.INFO, filename='logs.log')
-locale.setlocale(locale.LC_TIME, 'ru_RU')
+locale.setlocale(locale.LC_TIME, 'ru_RU.UTF-8')
 
 scheduler = AsyncIOScheduler()
 scheduler.add_job(check_planned_posts, "interval", seconds=20)
