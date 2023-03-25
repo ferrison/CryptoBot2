@@ -4,8 +4,8 @@ from aiogram.dispatcher.fsm.context import FSMContext
 from sqlalchemy.orm import Session
 
 from db import engine
-from handlers.new_post import choosing_setting
-from handlers.post_changing_common import sending_posting_date
+from handlers.content_plan import choosing_setting
+from handlers.post_changing_common import sending_posting_date, choosing_post
 from handlers.new_post.router import new_post_router
 from handlers.new_post.state import NewPost
 from keyboards import common
@@ -50,7 +50,14 @@ async def now(callback: types.CallbackQuery, state: FSMContext):
                                               f'в следующих каналах: {", ".join(post_links)}',
                                          parse_mode="HTML")
     await callback.answer()
-    await state.clear()
+    state_data = await state.get_data()
+    if state_data.get('back_to_contentplan'):
+        await state.update_data(action='post_choosing',
+                                proceed_entry=choosing_setting.entry,
+                                stepback_entry=None)
+        await choosing_post.entry(callback.message.answer, state)
+    else:
+        await state.clear()
 
 
 @new_post_router.callback_query(NewPost.choosing_posting_method, Text(text='delayed'))

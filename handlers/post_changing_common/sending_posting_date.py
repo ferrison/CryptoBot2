@@ -5,6 +5,8 @@ from aiogram.dispatcher.fsm.context import FSMContext
 from sqlalchemy.orm import Session
 
 from db import engine
+from handlers.content_plan import choosing_setting
+from handlers.post_changing_common import choosing_post
 from handlers.post_changing_common.router import post_changing_router
 from handlers.post_changing_common.state import PostChanging
 from keyboards import common
@@ -40,9 +42,16 @@ async def message_sended(message: types.Message, state: FSMContext):
             post.date = datetime.strptime(message.text, DATETIME_FORMAT)
             post.is_draft = False
             session.commit()
+        state_data = await state.get_data()
 
         if state_data['terminate']:
             await message.answer("Пост запланирован!")
+            if state_data.get('back_to_contentplan'):
+                await state.update_data(action='post_choosing',
+                                        proceed_entry=choosing_setting.entry,
+                                        stepback_entry=None)
+                await choosing_post.entry(message.answer, state)
+                return
             await state.clear()
             return
         else:

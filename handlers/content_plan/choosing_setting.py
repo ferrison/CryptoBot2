@@ -132,6 +132,7 @@ async def copy(callback: types.CallbackQuery, state: FSMContext):
         session.add(new_post)
         session.commit()
         await state.update_data(post_id=new_post.id)
+    await state.update_data(back_to_contentplan=True)
     await choosing_posting_type.entry(callback.message.edit_text, state, entry, choosing_setting.entry)
 
 
