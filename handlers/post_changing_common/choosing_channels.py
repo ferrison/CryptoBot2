@@ -103,11 +103,17 @@ async def proceed(callback: types.CallbackQuery, state: FSMContext):
         post.messages = [Message(channel_tg_id=ch) for ch in selected_channel_ids]
         session.commit()
     state_data = await state.get_data()
+    del state_data['selected_channel_ids']
+    await state.set_data(state_data)
     await state_data['proceed_method'](callback.message.edit_text, state)
     await callback.answer()
 
 
 @post_changing_router.callback_query(PostChanging.choosing_channels, common.StepbackCallback.filter())
 async def stepback(callback: types.CallbackQuery, state: FSMContext):
+    state_data = await state.get_data()
+    del state_data['selected_channel_ids']
+    await state.set_data(state_data)
+
     await choosing_posting_type.entry(callback.message.edit_text, state)
     await callback.answer()
