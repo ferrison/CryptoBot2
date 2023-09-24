@@ -23,9 +23,13 @@ async def entry(message_edit_method, state):
 @media_group_handler
 async def album_sended(messages: list[types.Message], state: FSMContext):
     with Session(engine) as session:
+        text = ''
+        for msg in messages:
+            if msg.html_text != '':
+                text = msg.html_text
         post = Post(manager_tg_id=messages[0].from_user.id,
                     type="mediagroup",
-                    text=messages[0].html_text,
+                    text=text,
                     bot_tg_id=bot.id)
         for msg in messages:
             if msg.content_type == 'photo':

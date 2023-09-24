@@ -52,7 +52,7 @@ async def send_post(post: Post, session):
                                                          reply_to_message_id=post.reply_message_tg_id or reply_msg_id,
                                                          media=[types.InputMedia(type=post.medias[0].type,
                                                                                  media=post.medias[0].file_id,
-                                                                                 caption=post.text,
+                                                                                 caption=get_inflated_text(post.text, post.manager_tg_id, msg.channel, session),
                                                                                  parse_mode="HTML")]
                                                                 + [types.InputMedia(type=m.type, media=m.file_id) for m in
                                                                   post.medias[1:]],

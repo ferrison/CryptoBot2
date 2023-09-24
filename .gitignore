@@ -3,5 +3,5 @@
 venv
 mysql
 .idea
-*.sql
+./*.sql
 *.log

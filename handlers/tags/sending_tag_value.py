@@ -19,10 +19,14 @@ async def entry(message_edit_method, state):
 async def message_sended(message: types.Message, state: FSMContext):
     state_data = await state.get_data()
     with Session(engine) as session:
-        tag_value = TagValue(tag_id=state_data['tag_id'],
-                             channel_tg_id=state_data['channel_id'],
-                             value=message.html_text)
-        session.add(tag_value)
+        tag_value = session.query(TagValue).filter_by(tag_id=state_data['tag_id'], channel_tg_id=state_data['channel_id']).one_or_none()
+        if tag_value:
+            tag_value.value = message.html_text
+        else:
+            tag_value = TagValue(tag_id=state_data['tag_id'],
+                                 channel_tg_id=state_data['channel_id'],
+                                 value=message.html_text)
+            session.add(tag_value)
         session.commit()
     await message.answer("Значение тега добавлено!")
     await choosing_setting.entry(message.answer, state)

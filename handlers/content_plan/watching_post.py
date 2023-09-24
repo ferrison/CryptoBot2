@@ -43,14 +43,18 @@ async def entry(message, state):
                                                                 disable_notification=True,
                                                                 parse_mode='HTML',
                                                                 **{post.type: post.file_id})
-    await state.update_data(chat_id=message.chat.id, msg_id=msg.message_id)
+    await state.update_data(chat_id=message.chat.id, msg=msg)
     await state.set_state(ContentPlan.watching_post)
 
 
 @content_plan_router.callback_query(ContentPlan.watching_post, common.StepbackCallback.filter())
 async def stepback(callback: types.CallbackQuery, state: FSMContext):
     state_data = await state.get_data()
-    await bot.delete_message(chat_id=state_data['chat_id'], message_id=state_data['msg_id'])
+    if isinstance(state_data['msg'], list):
+        for msg in state_data['msg']:
+            await bot.delete_message(chat_id=state_data['chat_id'], message_id=msg.message_id)
+    else:
+        await bot.delete_message(chat_id=state_data['chat_id'], message_id=state_data['msg'].message_id)
     if state_data.get('buttons_msg_id'):
         await bot.delete_message(chat_id=state_data['chat_id'], message_id=state_data['buttons_msg_id'])
     await choosing_setting.entry(callback.message.edit_text, state)
